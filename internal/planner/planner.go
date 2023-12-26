@@ -21,14 +21,20 @@ func Solve(jobs []Job) []Job {
 	opt := make([]Job, length)
 	for r := range jobs {
 		dl := jobs[r].dl
-		newPlace := d.DsuFind(dl)
-		if newPlace != 0 {
-			opt[newPlace] = jobs[r]
+		dlParent := d.DsuFind(dl)
+		leftCorner := d.Left[dlParent]
+
+		if leftCorner != 0 {
+			opt[leftCorner] = jobs[r]
+			d.Left[dlParent]--
+			d.DsuUnion(dl, d.Left[dlParent])
 		} else {
-			newPlace = d.DsuFind(length - 1)
-			opt[newPlace] = jobs[r]
+			rightParent := d.DsuFind(length - 1)
+			leftCorner = d.Left[rightParent]
+			opt[leftCorner] = jobs[r]
+			d.Left[rightParent]--
+			d.DsuUnion(rightParent, d.Left[rightParent])
 		}
-		d.Parent[newPlace]--
 	}
 
 	return opt
